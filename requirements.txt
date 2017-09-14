@@ -1,3 +1,5 @@
+# Note: I'm attempting to keep to dependencies only available in FreeBSD.
+
 cherrypy==5.4.0
 dulwich==0.15.0
-peewee==2.9.2
+markdown==2.6.8

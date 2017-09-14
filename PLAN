@@ -1,0 +1,15 @@
+To keep things simple, the site is managed as a git repo consisting of a number
+of markdown files, optionally backed by a rendering cache of some kind (such as
+redis).
+
+Internally, these files end with .md, but when rendered will lack this affix.
+Appending this affix will display the unrendered source file.
+
+The markdown files have a metadata header, which can include tags, categories,
+&c. Blog entries become just another kind of page, albeit one in a particular
+directory and with a special form for creating new entries.
+
+[Open question: how will this be implemented? How will it interact with the
+blog archive?]
+
+[Open question: what about draft entries? Feeds?]
