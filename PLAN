@@ -1,15 +1,16 @@
-To keep things simple, the site is managed as a git repo consisting of a number
-of markdown files, optionally backed by a rendering cache of some kind (such as
-redis).
+I'm cutting down the complexity of this project drastically.
 
-Internally, these files end with .md, but when rendered will lack this affix.
-Appending this affix will display the unrendered source file.
+The plan is now to simply replace my current PHP-based blogging tool with
+something written in Python. As with the existing tool, the new one will use
+PostgreSQL as a backing store, though switching to SQLite would be acceptable
+if I could do so safely.
 
-The markdown files have a metadata header, which can include tags, categories,
-&c. Blog entries become just another kind of page, albeit one in a particular
-directory and with a special form for creating new entries.
+/ <- Root
+/<YYYY>-<MM> <- Month
+/<N+> <- Entry
+/;add <- Add entry
+/;feed <- Atom feed
+/<N+>;edit <- Edit entry
 
-[Open question: how will this be implemented? How will it interact with the
-blog archive?]
-
-[Open question: what about draft entries? Feeds?]
+Feed ID: tag:talideon.com,2001:weblog
+Feed entry ID: tag:talideon.com,2001:weblog:N+
