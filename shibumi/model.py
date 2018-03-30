@@ -3,9 +3,8 @@ import bottle_peewee
 import peewee
 
 
-#
+# Set PEEWEE_CONNECTION in the environment.
 db = bottle_peewee.PeeweePlugin()
-bottle.Bottle().install(db)
 
 
 class BaseModel(peewee.Model):
@@ -52,3 +51,8 @@ class Entry(BaseModel):
     user_c = peewee.ForeignKeyField(User, db_column='user_id_c', related_name='entries')
     user_m = peewee.ForeignKeyField(User, db_column='user_id_m')
     note = peewee.TextField()
+
+
+def create_tables():
+    for table in [User, Page, Entry]:
+        db.database.create_table(table)
