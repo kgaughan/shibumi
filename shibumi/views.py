@@ -1,15 +1,36 @@
+import hashlib
+import httplib
 from os import path
+import urlparse
 
+from adjunct import xmlutils
 import bottle
 
-from .bootstrap import app, STATIC
+from .bootstrap import app, fmt, STATIC
 from .model import Entry
+
+
+TAG = 'tag:talideon.com,2001:weblog'
+
+def base_url():
+    parts = bottle.request.urlparts
+    return '{}://{}{}'.format(parts.scheme,
+                              parts.netloc,
+                              bottle.request.script_name)
+
+
+def get_full_url(*args, **kwargs):
+    return urlparse.urljoin(base_url(), app.get_url(*args, **kwargs))
+
+
+def make_etag(src):
+    return '"' + hashlib.md5(src).hexdigest() + '"'
 
 
 @app.get('/', name='latest')
 @bottle.view('latest')
 def root():
-    return {'entries': Entry.select().order_by(Entry.time_c.desc()).limit(50)}
+    return {'entries': Entry.get_latest()}
 
 
 @app.get('/<year:re:[0-9]{4}>-<month:re:[01][0-9]>', name='archive')
@@ -19,7 +40,64 @@ def archive(year, month):
 
 @app.get('/;feed', name='feed')
 def feed():
-    return 'feed'
+    modified = Entry.get_most_recent_modification().strftime('%Y-%m-%dT%H:%M:%SZ')
+    etag = make_etag(modified)
+    if bottle.request.headers.get('If-None-Match', '').lstrip('W/') == etag:
+        bottle.response.status = httplib.NOT_MODIFIED
+        return ''
+
+    bottle.response.headers['ETag'] = etag
+    bottle.response.content_type = 'application/atom+xml; charset=UTF-8'
+
+    xml = xmlutils.XMLBuilder()
+    with xml.within('feed', xmlns='http://www.w3.org/2005/Atom'):
+        xml.tag('title', 'Inklings')
+        xml.tag('subtitle', 'A stream of random things')
+        xml.tag('updated', modified)
+        with xml.within('author'):
+            xml.tag('name', 'Keith Gaughan')
+        xml.tag('id', 'tag:talideon.com,2001:weblog')
+        xml.tag('rights', 'Copyright (c) Keith Gaughan, 2001-2018')
+        xml.tag('link',
+                rel='alternate',
+                type='text/html',
+                hreflang='en',
+                href=get_full_url('latest'))
+        xml.tag('link',
+                rel='self',
+                type='application/atom+xml',
+                href=bottle.request.url)
+
+        for entry in Entry.get_feed():
+            with xml.within('entry'):
+                xml.tag('title', entry.title or 'Untitled')
+                xml.tag('published', entry.time_c.strftime('%Y-%m-%dT%H:%M:%SZ'))
+                xml.tag('updated', entry.time_m.strftime('%Y-%m-%dT%H:%M:%SZ'))
+                xml.tag('tag', '{}:{}'.format(TAG, entry.id))
+
+                entry_link = get_full_url('entry', entry_id=entry.id)
+                xml.tag('link',
+                        rel='alternate',
+                        type='text/html',
+                        href=entry_link)
+                if entry.link:
+                    xml.tag('link',
+                            rel='related',
+                            type='text/html',
+                            href=entry_link)
+                if entry.via:
+                    xml.tag('link',
+                            rel='via',
+                            type='text/html',
+                            href=entry.via)
+                attrs = {
+                    'type': 'html',
+                    'xml:lang': 'en',
+                    'xml:base': entry_link,
+                }
+                xml.tag('content', fmt(entry.note), **attrs)
+
+    return xml.as_string()
 
 
 @app.get('/;add')

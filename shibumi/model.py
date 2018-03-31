@@ -52,6 +52,17 @@ class Entry(BaseModel):
     user_m = peewee.ForeignKeyField(User, db_column='user_id_m')
     note = peewee.TextField()
 
+    @classmethod
+    def get_feed(cls):
+        return cls.select().order_by(cls.time_m.desc()).limit(50)
+
+    @classmethod
+    def get_latest(cls):
+        return cls.select().order_by(cls.time_c.desc()).limit(50)
+
+    @classmethod
+    def get_most_recent_modification(cls):
+        return cls.select(peewee.fn.Max(cls.time_m)).scalar(convert=True)
 
 def create_tables():
     for table in [User, Page, Entry]:
