@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<title>{{ title }}</title>
+
+		<meta name="MSSmartTagsPreventParsing" content="true">
+		<meta name="Author" content="Keith Gaughan">
+
+		<link title="Feed" rel="alternate" href="{{ get_url('feed') }}" type="application/atom+xml">
+		<link rel="stylesheet" href="{{ get_url('static', path='screen.css') }}" type="text/css" media="screen">
+		<link rel="stylesheet" href="{{ get_url('static', path='print.css') }}" type="text/css" media="print">
+
+		<style type="text/css" media="handheld">
+		#content, #footer, #masthead {
+			width: 22em;
+			font-size: 200%;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="masthead"><a href="{{ get_url('latest') }}">stereochro<span>me</span></a></div>
+		<div id="outer1">
+			<div id="content">
+				{{ !base }}
+			</div>
+		</div>
+		<div id="outer2">
+			<div id="footer">
+				<hr>
+				<a href="http://en.wikipedia.org/wiki/Hacker_(programmer_subculture)"><img src="{{ get_url('static', path='images/glider.png') }}" style="float:right" width="55" height="55" alt="Hacker"></a>
+				<address>
+					Copyright &copy; Keith Gaughan, 2001&#8210;2018.
+					All Rights Reserved.
+					You can stop reading now.
+				</address>
+				<p>
+<a href="//ipv6ready.ie/verify/d64e5fedaefdb41b1a0b198d4a4faa7a3cf832de">
+  <img width="120" height="20"
+	src="//d-badges.ipv6ready.ie/d/64/e5/fe/d64e5fedaefdb41b1a0b198d4a4faa7a3cf832de-s.png"
+	alt="[IPv6 Ready]">
+</a>
+				</p>
+			</div>
+		</div>
+		<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-2914483-4']);
+		_gaq.push(['_trackPageview']);
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+		</script>
+	</body>
+</html>

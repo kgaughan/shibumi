@@ -1,0 +1,19 @@
+<div class="entry">
+	<div class="meta">
+		<div><a title="Permalink" href="{{ get_url('entry', entry_id=entry.id) }}">&infin;</a></div>
+	</div>
+
+	% if entry.title is not None and entry.link is not None:
+		<h2><a href="{{ entry.link }}">{{ entry.title }}</a></h2>
+	% elif entry.title is not None:
+		<h2>{{ entry.title }}</h2>
+	% end
+
+	<!-- ?php if (($embed = generate_link_embed($link)) !== false) { ?>
+		<div class="illustration"><?php echo $embed ?></div>
+	<?php } ? -->
+
+	% if entry.note is not None and entry.note != '':
+		{{ !markdown(entry.note) }}
+	% end
+</div>

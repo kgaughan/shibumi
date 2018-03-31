@@ -1,0 +1,9 @@
+% import bottle
+% rebase('base.html', title="Inklings")
+<h1>Latest Inklings</h1>
+% for entry in entries:
+	% include('entry-body.html', entry=entry)
+% end
+% if len(entries) == 0:
+	<p>There are no entries.</p>
+% end
