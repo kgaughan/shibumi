@@ -34,8 +34,13 @@ def root():
 
 
 @app.get('/<year:re:[0-9]{4}>-<month:re:[01][0-9]>', name='archive')
+@bottle.view('archive')
 def archive(year, month):
-    return 'view archive: ({} {})'.format(year, month)
+    entries = Entry.get_month(int(year), int(month))
+    if len(entries) == 0:
+        bottle.response.status = httplib.NOT_FOUND
+        return ''
+    return {'entries': entries}
 
 
 @app.get('/;feed', name='feed')
@@ -111,13 +116,25 @@ def add_entry():
 
 
 @app.get('/<entry_id:int>', name='entry')
+@bottle.view('entry')
 def entry(entry_id):
-    return 'view entry: {}'.format(entry_id)
+    try:
+        entry = Entry.get(Entry.id == entry_id)
+    except Entry.DoesNotExist:
+        bottle.response.status = httplib.NOT_FOUND
+        return ''
+    return {'entry': entry}
 
 
-@app.get('/<entry_id:int>;edit')
+@app.get('/<entry_id:int>;edit', name='edit')
+@bottle.view('edit_entry')
 def edit_entry(entry_id):
-    return 'edit entry: {}'.format(entry_id)
+    try:
+        entry = Entry.get(Entry.id == entry_id)
+    except Entry.DoesNotExist:
+        bottle.response.status = httplib.NOT_FOUND
+        return ''
+    return {'entry': entry}
 
 
 @app.post('/<entry_id:int>')
